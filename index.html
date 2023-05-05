@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="resource\css\style.css">
+</head>
+
+<div id="nav">
+  <div id="headerbox"> 
+
+    <div id="n_photography" class="headerelement active">
+      <a href="/index.html">photography</a>
+    </div> 
+    <div id="n_news" class="headerelement">
+      <a href="/works.html">work</a>
+    </div> 
+    <div id="n_about" class="headerelement">
+      <a href="/about/">About</a>
+    </div> 
+    <div id="n_archive" class="headerelement">
+      <a href="/archive/">CV</a>
+    </div> 
+  </div>
+  <div id="headerbox_left">
+    <div id="n_logo" class="headerelement"> 
+      <a href="/index.html"> <img src="resource\img\logo\logo.png" height="39" style="vertical-align:top"> &nbsp;YCH&nbsp; </a> 
+    </div> 
+    <div id="my_name" class="headerelement">
+      <a href="/index.html">Y.Liang Chen</a>
+    </div>
+  </div>
+</div>
+
+<body>
+
+
+  <div class="slideshow-container">
+
+    <div class="mySlides fade">
+      <img src="resource\img\photography\1.JPG" style="width:100%">
+    </div>
+
+    <div class="mySlides fade">
+      <img src="resource\img\photography\2.JPG" style="width:100%">
+    </div>
+
+    <div class="mySlides fade">
+      <img src="resource\img\photography\3.JPG" style="width:100%">
+    </div>
+
+    <div class="mySlides fade">
+      <img src="resource\img\photography\4.JPG" style="width:100%">
+    </div>
+
+    <div class="mySlides fade">
+      <img src="resource\img\photography\5.JPG" style="width:100%">
+    </div>
+
+    <div class="mySlides fade">
+      <img src="resource\img\photography\6.JPG" style="width:100%">
+    </div>
+
+    <div class="mySlides fade">
+      <img src="resource\img\photography\7.JPG" style="width:100%">
+    </div>
+
+    <div class="mySlides fade">
+      <img src="resource\img\photography\8.JPG" style="width:100%">
+    </div>
+
+    <div class="mySlides fade">
+      <img src="resource\img\photography\9.JPG" style="width:100%">
+    </div>
+
+    <div class="mySlides fade">
+      <img src="resource\img\photography\10.JPG" style="width:100%">
+    </div>
+
+    <div class="mySlides fade">
+      <img src="resource\img\photography\11.JPG" style="width:100%">
+    </div>
+
+    <a class="prev" onclick="plusSlides(-1)">❮</a>
+    <a class="next" onclick="plusSlides(1)">❯</a>
+
+  </div>
+
+  <div class="button">
+    <button class="w3-button" onclick="plusSlides(-1)">PREV</button>
+    <button class="w3-button" onclick="plusSlides(1)">NEXT</button>
+  </div>
+  <br>
+
+
+
+  <script>
+  let slideIndex = 1;
+  showSlides(slideIndex);
+
+  function plusSlides(n) {
+    showSlides(slideIndex += n);
+  }
+
+  function currentSlide(n) {
+    showSlides(slideIndex = n);
+  }
+
+  function showSlides(n) {
+    let i;
+    let slides = document.getElementsByClassName("mySlides");
+    let dots = document.getElementsByClassName("dot");
+    if (n > slides.length) {slideIndex = 1}    
+    if (n < 1) {slideIndex = slides.length}
+    for (i = 0; i < slides.length; i++) {
+      slides[i].style.display = "none";  
+    }
+    for (i = 0; i < dots.length; i++) {
+      dots[i].className = dots[i].className.replace(" active", "");
+    }
+    slides[slideIndex-1].style.display = "block";  
+    dots[slideIndex-1].className += " active";
+  }
+  </script>
+
+</body>
+</html> 
