@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.js"></script>
-<link rel="stylesheet" href= "css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Road Rage Game</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.js"></script>
+    
 </head>
-
-
-<title>YCHen</title>
 
 <div id="nav">
   <div id="headerbox"> 
@@ -36,32 +36,17 @@
 </div>
 
 <body>
-  <div id="game-container">
-    <h1>My P5.js Game</h1>
-    <div id="game-canvas"></div>
-</div>
-
-<script src="program/js/main.js"></script>
-<script src="program/js/Animation.js"></script>
-<script src="program/js/Bonus.js"></script>
-<script src="program/js/Enemies.js"></script>
-<script src="program/js/Player.js"></script>
-<script src="program/js/config.js"></script>
-<script src="program/js/AssetLoader.js"></script>
-<script>
-    // This script creates a new p5 instance and specifies the parent element
-    p.setup = function() {
-            let canvas = p.createCanvas(680, 680);
-            canvas.parent('game-canvas');
-            // Rest of your setup code...
-        };
-
-        p.draw = function() {
-            // Your draw function code...
-        };
-        // Add any other functions from your sketch.js here...
-
-    }, 'game-canvas');
-</script>
-
+  <sketch>
+    <div id="game-container">
+        <div id="loading-screen">Loading... 0%</div>
+    </div>
+    <script src="js/config.js"></script>
+    <script src="js/AssetLoader.js"></script>
+    <script src="js/Animation.js"></script>
+    <script src="js/Bonus.js"></script>
+    <script src="js/Enemies.js"></script>
+    <script src="js/Player.js"></script>
+    <script src="js/main.js"></script>
+  </sketch>
 </body>
+</html>

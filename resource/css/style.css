@@ -251,3 +251,34 @@ user agent stylesheet
 div {
     display: block;
 }
+
+/* Game container styling - revised */
+#game-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: auto; /* Let the content determine the height */
+  margin: 0 auto;
+  position: relative;
+  padding-top: 40px; /* Reduced padding */
+  clear: both; /* Clear the floating elements from the nav */
+}
+
+/* Make sure the canvas is visible and centered */
+canvas {
+  display: block !important;
+  margin: 0 auto !important;
+  position: relative !important; /* Ensure it respects normal document flow */
+}
+
+/* Loading screen styling */
+#loading-screen {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  z-index: 10;
+}
