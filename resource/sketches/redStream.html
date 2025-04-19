@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>YCHen - Red Stream</title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../../resource/css/bootstrap.min.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../../resource/css/style_works.css">
+    <link rel="stylesheet" href="../../resource/css/style.css">
+    <link rel="stylesheet" href="../../resource/css/sketches.css">
+    
+    <!-- P5.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+    
+    <style>
+        #sketch-container {
+            width: 100%;
+            height: 80vh;
+            margin: 0 auto;
+            display: block;
+            background-color: #000000;
+        }
+        
+        .source-code {
+            margin-top: 30px;
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        
+        .source-code pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+<div id="nav">
+    <div id="headerbox"> 
+        <div id="n_photography" class="headerelement">
+            <a href="/">photography</a>
+        </div> 
+        <div id="n_work" class="headerelement">
+            <a href="/work.html">work</a>
+        </div>
+        <div id="n_sketches" class="headerelement active">
+            <a href="/sketches.html">sketches</a>
+        </div>
+        <div id="n_about" class="headerelement">
+            <a href="/about.html">About</a>
+        </div> 
+        <div id="n_archive" class="headerelement">
+            <a href="/resource/pdf/CV_YliangChen_2023.pdf">CV</a>
+        </div> 
+    </div>
+    <div id="headerbox_left">
+        <div id="n_logo" class="headerelement"> 
+            <a href="/index.html"> <img src="../../resource/img/logo/logo.png" height="39" style="vertical-align:top"> &nbsp;YCH&nbsp; </a> 
+        </div> 
+        <div id="my_name" class="headerelement">
+            <a href="/index.html">Y.Liang Chen</a>
+        </div>
+    </div>
+</div>
+
+<div class="social-profiles">
+</div><!-- .social-profiles -->
+
+<div class="nav-bar-sep d-lg-none"></div>
+
+<div class="outer-container">
+    <div class="container sketch-detail-page">
+        <div class="row">
+            <div class="col">
+                <ul class="breadcrumbs flex align-items-center">
+                    <li><a href="/sketches.html">Sketches</a></li>
+                    <li>Red Stream</li>
+                </ul><!-- .breadcrumbs -->
+            </div><!-- .col -->
+        </div><!-- .row -->
+
+        <div class="row">
+            <div class="col-12">
+                <h1 class="sketch-title">Red Stream</h1>
+                <div class="sketch-tags">
+                    <span class="tag">p5.js</span>
+                    <span class="tag">Network Visualization</span>
+                    <span class="tag">2022</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div id="sketch-container">
+                    <!-- The sketch will be rendered here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="source-code">
+                    <h3>Source Code</h3>
+                    <pre><code>
+// Full source code can be viewed in redStream.js
+// Key components:
+// - Node class: Creating moving network nodes with properties
+// - Branch class: Connections between nodes with energy flow visualization
+// - Dynamic connections forming and breaking over time
+// - Pulse effects along connection paths
+// - Energy transfer system between connected nodes
+                    </code></pre>
+                </div>
+            </div>
+        </div>
+    </div><!-- .container -->
+</div><!-- .outer-container -->
+
+<script type='text/javascript' src='../../js/jquery.js'></script>
+<script type='text/javascript' src='../../js/custom.js'></script>
+
+<!-- Load the actual sketch -->
+<script>
+// Create new instance of p5 for the sketch container
+new p5((p) => {
+    let nodes = [];
+    let branches = [];
+    let nodesCount = 80;
+    let maxConnections = 3;
+    let minDistance = 50;
+    let maxDistance = 200;
+
+    p.setup = function() {
+        // Create the canvas inside the container
+        let canvas = p.createCanvas(
+            document.getElementById('sketch-container').offsetWidth, 
+            document.getElementById('sketch-container').offsetHeight
+        );
+        canvas.parent('sketch-container');
+        
+        // Create initial nodes
+        for (let i = 0; i < nodesCount; i++) {
+            nodes.push(new Node(
+                p.random(p.width),
+                p.random(p.height)
+            ));
+        }
+        
+        // Create branches between nearby nodes
+        for (let i = 0; i < nodes.length; i++) {
+            let connections = 0;
+            let possibleConnections = [];
+            
+            // Find all possible connections
+            for (let j = 0; j < nodes.length; j++) {
+                if (i !== j) { // Don't connect to self
+                    let d = p.dist(
+                        nodes[i].pos.x, nodes[i].pos.y,
+                        nodes[j].pos.x, nodes[j].pos.y
+                    );
+                    
+                    if (d > minDistance && d < maxDistance) {
+                        possibleConnections.push(j);
+                    }
+                }
+            }
+            
+            // Randomly choose connections
+            p.shuffle(possibleConnections, true);
+            let numConnections = p.min(maxConnections, possibleConnections.length);
+            
+            for (let k = 0; k < numConnections; k++) {
+                branches.push(new Branch(i, possibleConnections[k]));
+            }
+        }
+        
+        p.background(0);
+    }
+
+    p.draw = function() {
+        p.background(0, 20);
+        
+        // Update and draw branches
+        for (let i = branches.length - 1; i >= 0; i--) {
+            branches[i].update();
+            branches[i].draw();
+            
+            // Sometimes break connections
+            if (p.random() < 0.0005) {
+                branches.splice(i, 1);
+            }
+        }
+        
+        // Update and draw nodes
+        for (let i = nodes.length - 1; i >= 0; i--) {
+            nodes[i].update();
+            nodes[i].draw();
+            
+            if (nodes[i].alive === 0) {
+                // Replace dead node
+                let nodeId = i;
+                
+                // Remove connected branches
+                for (let j = branches.length - 1; j >= 0; j--) {
+                    if (branches[j].startId === nodeId || branches[j].endId === nodeId) {
+                        branches.splice(j, 1);
+                    }
+                }
+                
+                // Replace node
+                nodes.splice(i, 1);
+                let newNode = new Node(p.random(p.width), p.random(p.height));
+                nodes.push(newNode);
+                
+                // Add new connections
+                let newNodeId = nodes.length - 1;
+                let connections = 0;
+                
+                for (let j = 0; j < nodes.length - 1; j++) {
+                    let d = p.dist(
+                        newNode.pos.x, newNode.pos.y,
+                        nodes[j].pos.x, nodes[j].pos.y
+                    );
+                    
+                    if (d > minDistance && d < maxDistance && connections < maxConnections && p.random() < 0.3) {
+                        branches.push(new Branch(newNodeId, j));
+                        connections++;
+                    }
+                }
+            }
+        }
+        
+        // Occasionally add new connections
+        if (p.random() < 0.05 && branches.length < nodes.length * 2) {
+            let start = p.floor(p.random(nodes.length));
+            let possibleEnds = [];
+            
+            for (let i = 0; i < nodes.length; i++) {
+                if (i !== start) {
+                    let d = p.dist(
+                        nodes[start].pos.x, nodes[start].pos.y,
+                        nodes[i].pos.x, nodes[i].pos.y
+                    );
+                    
+                    if (d > minDistance && d < maxDistance) {
+                        // Check if connection already exists
+                        let exists = false;
+                        for (let branch of branches) {
+                            if ((branch.startId === start && branch.endId === i) ||
+                                (branch.startId === i && branch.endId === start)) {
+                                exists = true;
+                                break;
+                            }
+                        }
+                        
+                        if (!exists) {
+                            possibleEnds.push(i);
+                        }
+                    }
+                }
+            }
+            
+            if (possibleEnds.length > 0) {
+                let end = p.random(possibleEnds);
+                branches.push(new Branch(start, end));
+            }
+        }
+    }
+
+    p.mousePressed = function() {
+        // Create disturbance at mouse position
+        if (p.mouseX > 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height) {
+            for (let node of nodes) {
+                let d = p.dist(p.mouseX, p.mouseY, node.pos.x, node.pos.y);
+                if (d < 100) {
+                    let angle = p.random(p.TWO_PI);
+                    let force = p.map(d, 0, 100, 50, 10);
+                    node.velocity.add(p.cos(angle) * force, p.sin(angle) * force);
+                }
+            }
+        }
+    }
+    
+    // Resize canvas when window is resized
+    p.windowResized = function() {
+        p.resizeCanvas(
+            document.getElementById('sketch-container').offsetWidth, 
+            document.getElementById('sketch-container').offsetHeight
+        );
+    }
+
+    class Node {
+        constructor(x, y) {
+            this.pos = p.createVector(x, y);
+            this.targetPos = p.createVector(p.random(p.width), p.random(p.height));
+            this.velocity = p.createVector(p.random(-1, 1), p.random(-1, 1));
+            this.damping = p.random(0.95, 0.98);
+            this.speed = p.random(0.1, 0.5);
+            this.size = p.random(2, 6);
+            this.color = p.color(200 + p.random(-30, 30));
+            this.alive = 1;
+            this.lifespan = p.random(300, 800);
+            this.age = 0;
+            this.energy = p.random(0.5, 1);
+        }
+        
+        update() {
+            // Drift slowly toward target
+            let direction = p5.Vector.sub(this.targetPos, this.pos);
+            direction.normalize();
+            direction.mult(this.speed * this.energy);
+            
+            this.velocity.add(direction);
+            this.velocity.mult(this.damping);
+            this.pos.add(this.velocity);
+            
+            // Create new target if close to current one
+            if (p5.Vector.dist(this.pos, this.targetPos) < 50) {
+                this.targetPos = p.createVector(p.random(p.width), p.random(p.height));
+            }
+            
+            // Stay within canvas
+            if (this.pos.x < 0 || this.pos.x > p.width) {
+                this.velocity.x *= -0.5;
+                this.pos.x = p.constrain(this.pos.x, 0, p.width);
+            }
+            if (this.pos.y < 0 || this.pos.y > p.height) {
+                this.velocity.y *= -0.5;
+                this.pos.y = p.constrain(this.pos.y, 0, p.height);
+            }
+            
+            // Age the node
+            this.age++;
+            if (this.age > this.lifespan) {
+                this.alive = 0;
+            }
+            
+            // Vary energy
+            this.energy += p.random(-0.01, 0.01);
+            this.energy = p.constrain(this.energy, 0.3, 1.2);
+        }
+        
+        draw() {
+            p.noStroke();
+            p.fill(p.red(this.color), p.green(this.color), p.blue(this.color), 150 * this.energy);
+            p.ellipse(this.pos.x, this.pos.y, this.size * this.energy, this.size * this.energy);
+        }
+    }
+
+    class Branch {
+        constructor(startId, endId) {
+            this.startId = startId;
+            this.endId = endId;
+            this.thickness = p.random(0.3, 1.5);
+            this.offset = p.random(p.TWO_PI); // For animated effects
+            this.energyTransferRate = p.random(0.001, 0.01);
+            this.energyTransferDir = p.random() < 0.5 ? 1 : -1;
+            this.color = p.color(150 + p.random(50), 20 + p.random(50), 20 + p.random(50));
+            this.segments = p.floor(p.random(1, 5));
+            this.segmentOffsets = [];
+            
+            for (let i = 0; i < this.segments - 1; i++) {
+                this.segmentOffsets.push({
+                    x: p.random(-50, 50),
+                    y: p.random(-50, 50),
+                    phase: p.random(p.TWO_PI),
+                    speed: p.random(0.01, 0.05)
+                });
+            }
+        }
+        
+        update() {
+            // Transfer energy between connected nodes
+            let startNode = nodes[this.startId];
+            let endNode = nodes[this.endId];
+            
+            // Only transfer if both nodes are alive
+            if (startNode && endNode) {
+                let energyAmount = this.energyTransferRate * this.energyTransferDir;
+                
+                startNode.energy -= energyAmount;
+                endNode.energy += energyAmount;
+                
+                // Reverse direction if energy gets too high or low
+                if (startNode.energy < 0.3 || endNode.energy > 1.2) {
+                    this.energyTransferDir *= -1;
+                }
+                if (endNode.energy < 0.3 || startNode.energy > 1.2) {
+                    this.energyTransferDir *= -1;
+                }
+                
+                // Constrain energy levels
+                startNode.energy = p.constrain(startNode.energy, 0.3, 1.2);
+                endNode.energy = p.constrain(endNode.energy, 0.3, 1.2);
+            }
+            
+            // Update segment offsets
+            for (let offset of this.segmentOffsets) {
+                offset.phase += offset.speed;
+            }
+        }
+        
+        draw() {
+            let start = nodes[this.startId];
+            let end = nodes[this.endId];
+            
+            if (start && end) {
+                let distance = p.dist(start.pos.x, start.pos.y, end.pos.x, end.pos.y);
+                let alpha = p.map(distance, minDistance, maxDistance, 200, 50);
+                let energy = (start.energy + end.energy) / 2;
+                
+                // Draw the branch
+                p.stroke(p.red(this.color), p.green(this.color), p.blue(this.color), alpha);
+                p.strokeWeight(this.thickness * energy);
+                p.noFill();
+                
+                if (this.segments === 1) {
+                    // Straight line
+                    p.line(start.pos.x, start.pos.y, end.pos.x, end.pos.y);
+                } else {
+                    // Curved or segmented line
+                    p.beginShape();
+                    p.vertex(start.pos.x, start.pos.y);
+                    
+                    for (let i = 0; i < this.segments - 1; i++) {
+                        let t = (i + 1) / this.segments;
+                        let offset = this.segmentOffsets[i];
+                        
+                        let midX = p.lerp(start.pos.x, end.pos.x, t);
+                        let midY = p.lerp(start.pos.y, end.pos.y, t);
+                        
+                        // Add some movement to the control points
+                        let offsetAmount = p.map(p.sin(p.frameCount * offset.speed + offset.phase), -1, 1, -20, 20);
+                        midX += offset.x + offsetAmount;
+                        midY += offset.y + offsetAmount;
+                        
+                        p.vertex(midX, midY);
+                    }
+                    
+                    p.vertex(end.pos.x, end.pos.y);
+                    p.endShape();
+                }
+                
+                // Energy pulse effect
+                if (p.random() < 0.05 * energy) {
+                    let pulseSize = p.random(3, 8) * energy;
+                    let pulsePos = p.random();
+                    let pulseX = p.lerp(start.pos.x, end.pos.x, pulsePos);
+                    let pulseY = p.lerp(start.pos.y, end.pos.y, pulsePos);
+                    
+                    p.noStroke();
+                    p.fill(p.red(this.color), p.green(this.color), p.blue(this.color), 150);
+                    p.ellipse(pulseX, pulseY, pulseSize, pulseSize);
+                }
+            }
+        }
+    }
+}, 'sketch-container');
+</script>
+
+</body>
+</html>

@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>YCHen - Quantum Particles</title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../../resource/css/bootstrap.min.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../../resource/css/style_works.css">
+    <link rel="stylesheet" href="../../resource/css/style.css">
+    <link rel="stylesheet" href="../../resource/css/sketches.css">
+    
+    <!-- P5.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+    
+    <style>
+        #sketch-container {
+            width: 100%;
+            height: 80vh;
+            margin: 0 auto;
+            display: block;
+            background-color: #10101f;
+        }
+        
+        .source-code {
+            margin-top: 30px;
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        
+        .source-code pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+<div id="nav">
+    <div id="headerbox"> 
+        <div id="n_photography" class="headerelement">
+            <a href="/">photography</a>
+        </div> 
+        <div id="n_work" class="headerelement">
+            <a href="/work.html">work</a>
+        </div>
+        <div id="n_sketches" class="headerelement active">
+            <a href="/sketches.html">sketches</a>
+        </div>
+        <div id="n_about" class="headerelement">
+            <a href="/about.html">About</a>
+        </div> 
+        <div id="n_archive" class="headerelement">
+            <a href="/resource/pdf/CV_YliangChen_2023.pdf">CV</a>
+        </div> 
+    </div>
+    <div id="headerbox_left">
+        <div id="n_logo" class="headerelement"> 
+            <a href="/index.html"> <img src="../../resource/img/logo/logo.png" height="39" style="vertical-align:top"> &nbsp;YCH&nbsp; </a> 
+        </div> 
+        <div id="my_name" class="headerelement">
+            <a href="/index.html">Y.Liang Chen</a>
+        </div>
+    </div>
+</div>
+
+<div class="social-profiles">
+</div><!-- .social-profiles -->
+
+<div class="nav-bar-sep d-lg-none"></div>
+
+<div class="outer-container">
+    <div class="container sketch-detail-page">
+        <div class="row">
+            <div class="col">
+                <ul class="breadcrumbs flex align-items-center">
+                    <li><a href="/sketches.html">Sketches</a></li>
+                    <li>Quantum Particles</li>
+                </ul><!-- .breadcrumbs -->
+            </div><!-- .col -->
+        </div><!-- .row -->
+
+        <div class="row">
+            <div class="col-12">
+                <h1 class="sketch-title">Quantum Particles</h1>
+                <div class="sketch-tags">
+                    <span class="tag">p5.js</span>
+                    <span class="tag">Physics Simulation</span>
+                    <span class="tag">2022</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div id="sketch-container">
+                    <!-- The sketch will be rendered here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="source-code">
+                    <h3>Source Code</h3>
+                    <pre><code>
+// Full source code can be viewed in quatumParticles.js
+// Key components:
+// - Particle class: Represents quantum particles with states and entanglement properties
+// - Entanglement system: Visualizes quantum connections between particles
+// - Quantum field visualization: Shows particle influence across space
+// - Mouse interaction to create new particles that become entangled
+// - Press 'f' to toggle quantum field visualization
+                    </code></pre>
+                </div>
+            </div>
+        </div>
+    </div><!-- .container -->
+</div><!-- .outer-container -->
+
+<script type='text/javascript' src='../../js/jquery.js'></script>
+<script type='text/javascript' src='../../js/custom.js'></script>
+
+<!-- Load the actual sketch -->
+<script>
+// Create new instance of p5 for the sketch container
+new p5((p) => {
+    let particles = [];
+    let entanglements = [];
+    let fieldStrength = 0.0005;
+    let showField = false;
+
+    p.setup = function() {
+        // Create the canvas inside the container
+        let canvas = p.createCanvas(
+            document.getElementById('sketch-container').offsetWidth, 
+            document.getElementById('sketch-container').offsetHeight
+        );
+        canvas.parent('sketch-container');
+        
+        p.colorMode(p.HSB, 100);
+        
+        // Initialize particles
+        for (let i = 0; i < 30; i++) {
+            particles.push(new Particle(
+                p.random(p.width),
+                p.random(p.height)
+            ));
+        }
+        
+        // Create entanglements between random particles
+        for (let i = 0; i < 15; i++) {
+            let p1 = p.floor(p.random(particles.length));
+            let p2 = p.floor(p.random(particles.length));
+            
+            // Avoid self-entanglement
+            if (p1 !== p2) {
+                entanglements.push({
+                    a: p1,
+                    b: p2
+                });
+                
+                // Set complementary states
+                particles[p1].state = p.floor(p.random(4));
+                particles[p2].state = (particles[p1].state + 2) % 4;
+            }
+        }
+        
+        p.background(10, 10, 15);
+    }
+
+    p.draw = function() {
+        // Fully clear the background each frame to prevent trails
+        p.background(10, 10, 15);
+        
+        // Draw quantum field visualization if toggled
+        if (showField) {
+            drawQuantumField();
+        }
+        
+        // Draw entanglement lines
+        for (let e of entanglements) {
+            let p1 = particles[e.a];
+            let p2 = particles[e.b];
+            
+            // Darken line if states are opposite
+            let stateOpposites = (p1.state + 2) % 4 === p2.state;
+            
+            // Draw entanglement with white color scheme
+            p.stroke(0, 0, 100, stateOpposites ? 50 : 20); // White with varying opacity
+            p.strokeWeight(stateOpposites ? 2 : 1);
+            
+            let midX = (p1.pos.x + p2.pos.x) / 2;
+            let midY = (p1.pos.y + p2.pos.y) / 2;
+            
+            // Draw curved connection
+            p.noFill();
+            p.beginShape();
+            p.vertex(p1.pos.x, p1.pos.y);
+            
+            // Add curve along path
+            let distance = p.dist(p1.pos.x, p1.pos.y, p2.pos.x, p2.pos.y);
+            let curveHeight = distance * 0.2 * p.sin(p.frameCount * 0.01);
+            let perpX = -(p2.pos.y - p1.pos.y) * 0.2;
+            let perpY = (p2.pos.x - p1.pos.x) * 0.2;
+            
+            p.quadraticVertex(
+                midX + perpX,
+                midY + perpY,
+                p2.pos.x,
+                p2.pos.y
+            );
+            p.endShape();
+            
+            // Occasionally transfer quantum state through entanglement
+            if (p.random() < 0.001) {
+                let temp = p1.state;
+                p1.state = p2.state;
+                p2.state = temp;
+                p1.measurementTime = p.frameCount;
+                p2.measurementTime = p.frameCount;
+            }
+        }
+        
+        // Update and draw particles
+        for (let p of particles) {
+            p.update();
+            p.display();
+        }
+        
+        // Create new entanglements occasionally
+        if (p.random() < 0.005 && entanglements.length < 30) {
+            let p1 = p.floor(p.random(particles.length));
+            let p2 = p.floor(p.random(particles.length));
+            
+            // Avoid duplicates and self-entanglement
+            let duplicate = false;
+            if (p1 !== p2) {
+                for (let e of entanglements) {
+                    if ((e.a === p1 && e.b === p2) || (e.a === p2 && e.b === p1)) {
+                        duplicate = true;
+                        break;
+                    }
+                }
+                
+                if (!duplicate) {
+                    entanglements.push({
+                        a: p1,
+                        b: p2
+                    });
+                    
+                    // Set complementary states
+                    particles[p2].state = (particles[p1].state + 2) % 4;
+                }
+            }
+        }
+        
+        // Info text
+        p.fill(100);
+        p.noStroke();
+        p.textSize(14);
+        p.text("Click to add particles. Press 'f' to toggle quantum field", 20, 30);
+    }
+
+    function drawQuantumField() {
+        let gridSize = 20;
+        
+        for (let x = 0; x < p.width; x += gridSize) {
+            for (let y = 0; y < p.height; y += gridSize) {
+                // Calculate field at this point
+                let fieldX = 0;
+                let fieldY = 0;
+                
+                for (let p of particles) {
+                    let dx = x - p.pos.x;
+                    let dy = y - p.pos.y;
+                    let sqDist = dx*dx + dy*dy;
+                    
+                    if (sqDist > 0) {
+                        let force = fieldStrength * p.size / sqDist;
+                        
+                        // Different particle states create different field effects
+                        if (p.state === 0) {
+                            fieldX += dx * force;
+                            fieldY += dy * force;
+                        } else if (p.state === 1) {
+                            fieldX += dy * force;
+                            fieldY -= dx * force;
+                        } else if (p.state === 2) {
+                            fieldX -= dx * force;
+                            fieldY -= dy * force;
+                        } else {
+                            fieldX -= dy * force;
+                            fieldY += dx * force;
+                        }
+                    }
+                }
+                
+                // Draw field vector in white
+                let fieldMag = p.sqrt(fieldX*fieldX + fieldY*fieldY) * 500;
+                // Use white with variable opacity based on field strength
+                p.stroke(0, 0, 100, p.map(fieldMag, 0, 30, 10, 30));
+                p.strokeWeight(1);
+                
+                p.push();
+                p.translate(x, y);
+                p.line(0, 0, fieldX * 500, fieldY * 500);
+                p.pop();
+            }
+        }
+    }
+
+    p.mousePressed = function() {
+        // Add new particle at mouse position
+        if (p.mouseX > 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height) {
+            particles.push(new Particle(p.mouseX, p.mouseY));
+            
+            // Potentially create entanglement with closest particle
+            if (particles.length > 1) {
+                let newIndex = particles.length - 1;
+                let closestIndex = 0;
+                let closestDist = Infinity;
+                
+                for (let i = 0; i < particles.length - 1; i++) {
+                    let d = p.dist(
+                        particles[newIndex].pos.x,
+                        particles[newIndex].pos.y,
+                        particles[i].pos.x,
+                        particles[i].pos.y
+                    );
+                    
+                    if (d < closestDist) {
+                        closestDist = d;
+                        closestIndex = i;
+                    }
+                }
+                
+                if (closestDist < 200) {
+                    entanglements.push({
+                        a: newIndex,
+                        b: closestIndex
+                    });
+                    
+                    // Set complementary states
+                    particles[newIndex].state = p.floor(p.random(4));
+                    particles[closestIndex].state = (particles[newIndex].state + 2) % 4;
+                }
+            }
+        }
+    }
+
+    p.keyPressed = function() {
+        if (p.key === 'f' || p.key === 'F') {
+            showField = !showField;
+        }
+    }
+    
+    // Resize canvas when window is resized
+    p.windowResized = function() {
+        p.resizeCanvas(
+            document.getElementById('sketch-container').offsetWidth, 
+            document.getElementById('sketch-container').offsetHeight
+        );
+    }
+
+    class Particle {
+        constructor(x, y) {
+            this.pos = p.createVector(x, y);
+            this.vel = p.createVector(p.random(-0.5, 0.5), p.random(-0.5, 0.5));
+            this.acc = p.createVector(0, 0);
+            this.size = p.random(20, 40);
+            this.state = p.floor(p.random(4)); // 4 quantum states
+            this.brightness = 100; // White
+            this.pulsePhase = p.random(p.TWO_PI);
+            this.pulseSpeed = p.random(0.03, 0.08);
+            this.measurementTime = 0;
+            this.isObserved = false;
+        }
+        
+        update() {
+            // Quantum probability field affects movement
+            for (let other of particles) {
+                if (other !== this) {
+                    let d = p5.Vector.dist(this.pos, other.pos);
+                    if (d > 0 && d < 200) {
+                        let force = p.createVector(
+                            other.pos.x - this.pos.x,
+                            other.pos.y - this.pos.y
+                        );
+                        
+                        force.normalize();
+                        
+                        // Quantum state determines attraction/repulsion
+                        let interaction = (this.state - other.state);
+                        if (interaction === 0) {
+                            force.mult(0); // No effect
+                        } else if (interaction % 2 === 0) {
+                            force.mult(-0.01); // Repulsion
+                        } else {
+                            force.mult(0.005); // Attraction
+                        }
+                        
+                        this.acc.add(force);
+                    }
+                }
+            }
+            
+            // Update physics
+            this.vel.add(this.acc);
+            this.vel.limit(2);
+            this.pos.add(this.vel);
+            this.acc.mult(0);
+            
+            // Wrap around screen
+            if (this.pos.x < 0) this.pos.x = p.width;
+            if (this.pos.x > p.width) this.pos.x = 0;
+            if (this.pos.y < 0) this.pos.y = p.height;
+            if (this.pos.y > p.height) this.pos.y = 0;
+            
+            // Reset observation effect after some time
+            if (this.isObserved && p.frameCount - this.measurementTime > 60) {
+                this.isObserved = false;
+            }
+        }
+        
+        display() {
+            p.push();
+            p.translate(this.pos.x, this.pos.y);
+            
+            // Quantum fluctuations
+            let pulse = p.sin(p.frameCount * this.pulseSpeed + this.pulsePhase) * 0.2 + 1;
+            
+            // All particles are white now, with varying opacity
+            let particleColor = p.color(0, 0, 100);
+            
+            // Measurement effect (collapse)
+            if (p.frameCount - this.measurementTime < 20) {
+                this.isObserved = true;
+                let collapseProgress = (p.frameCount - this.measurementTime) / 20;
+                
+                // Collapse wave function effect
+                p.noFill();
+                for (let i = 0; i < 5; i++) {
+                    let alpha = p.map(i, 0, 5, 100, 0) * (1 - collapseProgress);
+                    p.stroke(0, 0, 100, alpha); // White
+                    p.strokeWeight(1);
+                    let expandSize = this.size * (1 + i * 0.3) * (1 + collapseProgress * 2);
+                    p.ellipse(0, 0, expandSize);
+                }
+            }
+            
+            // Quantum uncertainty cloud
+            if (!this.isObserved) {
+                for (let i = 3; i > 0; i--) {
+                    p.noStroke();
+                    p.fill(0, 0, 100, 10); // White with low opacity
+                    p.ellipse(0, 0, this.size * pulse * (1 + i * 0.3));
+                }
+            }
+            
+            // Main particle body (pill shape)
+            p.fill(0, 0, 100, 90); // White with high opacity
+            p.noStroke();
+            p.rect(
+                -this.size/3 * pulse,
+                -this.size/6 * pulse,
+                this.size * 2/3 * pulse,
+                this.size * 1/3 * pulse,
+                this.size/6 * pulse
+            );
+            
+            // Inner glow
+            if (this.isObserved) {
+                p.fill(0, 0, 100, 50); // White with medium opacity
+                p.ellipse(0, 0, this.size * 0.4);
+            } else {
+                // Quantum state symbol - now in dark color to contrast with white
+                p.fill(0, 0, 20); // Dark gray/black
+                p.textSize(this.size * 0.3);
+                p.textAlign(p.CENTER, p.CENTER);
+                p.text(["↑", "→", "↓", "←"][this.state], 0, 0);
+            }
+            
+            p.pop();
+        }
+    }
+}, 'sketch-container');
+</script>
+
+</body>
+</html>

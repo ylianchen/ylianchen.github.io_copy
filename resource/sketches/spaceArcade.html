@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>YCHen - Space Arcade</title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../../resource/css/bootstrap.min.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../../resource/css/style_works.css">
+    <link rel="stylesheet" href="../../resource/css/style.css">
+    <link rel="stylesheet" href="../../resource/css/sketches.css">
+    
+    <!-- P5.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+    
+    <style>
+        #sketch-container {
+            width: 100%;
+            height: 80vh;
+            margin: 0 auto;
+            display: block;
+            background-color: #0c0818;
+        }
+        
+        .source-code {
+            margin-top: 30px;
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        
+        .source-code pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+<div id="nav">
+    <div id="headerbox"> 
+        <div id="n_photography" class="headerelement">
+            <a href="/">photography</a>
+        </div> 
+        <div id="n_work" class="headerelement">
+            <a href="/work.html">work</a>
+        </div>
+        <div id="n_sketches" class="headerelement active">
+            <a href="/sketches.html">sketches</a>
+        </div>
+        <div id="n_about" class="headerelement">
+            <a href="/about.html">About</a>
+        </div> 
+        <div id="n_archive" class="headerelement">
+            <a href="/resource/pdf/CV_YliangChen_2023.pdf">CV</a>
+        </div> 
+    </div>
+    <div id="headerbox_left">
+        <div id="n_logo" class="headerelement"> 
+            <a href="/index.html"> <img src="../../resource/img/logo/logo.png" height="39" style="vertical-align:top"> &nbsp;YCH&nbsp; </a> 
+        </div> 
+        <div id="my_name" class="headerelement">
+            <a href="/index.html">Y.Liang Chen</a>
+        </div>
+    </div>
+</div>
+
+<div class="social-profiles">
+</div><!-- .social-profiles -->
+
+<div class="nav-bar-sep d-lg-none"></div>
+
+<div class="outer-container">
+    <div class="container sketch-detail-page">
+        <div class="row">
+            <div class="col">
+                <ul class="breadcrumbs flex align-items-center">
+                    <li><a href="/sketches.html">Sketches</a></li>
+                    <li>Space Arcade</li>
+                </ul><!-- .breadcrumbs -->
+            </div><!-- .col -->
+        </div><!-- .row -->
+
+        <div class="row">
+            <div class="col-12">
+                <h1 class="sketch-title">Space Arcade</h1>
+                <div class="sketch-tags">
+                    <span class="tag">p5.js</span>
+                    <span class="tag">Game</span>
+                    <span class="tag">Pixel Art</span>
+                    <span class="tag">2021</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div id="sketch-container">
+                    <!-- The sketch will be rendered here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="source-code">
+                    <h3>Source Code</h3>
+                    <pre><code>
+// Full source code can be viewed in spaceArcade.js
+// Key components:
+// - Player class: Controls the spaceship with arrow keys
+// - Pills class: Collectible items for points
+// - Enemy class: Obstacles to avoid with different appearance variants
+// - Pixel art rendering with pixelSize grid
+// - CRT and scanline effects for retro arcade feel
+// - Game loop with score tracking and game over state
+                    </code></pre>
+                </div>
+            </div>
+        </div>
+    </div><!-- .container -->
+</div><!-- .outer-container -->
+
+<script type='text/javascript' src='../../js/jquery.js'></script>
+<script type='text/javascript' src='../../js/custom.js'></script>
+
+<!-- Load the actual sketch -->
+<script>
+// Create new instance of p5 for the sketch container
+new p5((p) => {
+    let pills = [];
+    let player;
+    let enemies = [];
+    let score = 0;
+    let gameOver = false;
+    let pixelSize = 4; // Size of each "pixel" in our pixel art
+    let scanlineAlpha = 20; // Alpha value for scanline effect
+    let stars = [];
+    
+    // Color palette
+    let palette = {
+        background: [12, 8, 24],
+        player: [201, 150, 66],   // Desaturated teal
+        playerHighlight: [181, 170, 165],
+        pill: [70, 78, 194],      // Desaturated green
+        pillHighlight: [160, 210, 168],
+        enemy: [175, 70, 65],     // Desaturated red
+        enemyHighlight: [198, 140, 138],
+        text: [210, 200, 220],    // Slightly off-white
+        gameOverText: [175, 70, 65],
+        stars: [90, 90, 140]      // Desaturated blue
+    };
+
+    p.setup = function() {
+        // Create the canvas inside the container
+        let canvas = p.createCanvas(
+            document.getElementById('sketch-container').offsetWidth, 
+            document.getElementById('sketch-container').offsetHeight
+        );
+        canvas.parent('sketch-container');
+        
+        // Create player
+        player = new Player(p.width/2, p.height - 50);
+        
+        // Create initial pills
+        for (let i = 0; i < 10; i++) {
+            pills.push(new Pill(p.random(p.width), p.random(-200, -50)));
+        }
+        
+        // Create enemies
+        for (let i = 0; i < 5; i++) {
+            enemies.push(new Enemy(p.random(p.width), p.random(-300, -100)));
+        }
+        
+        // Set up initial stars
+        setupStars();
+        
+        p.background(palette.background);
+        p.textFont('Courier New');
+        p.noSmooth(); // Disable anti-aliasing for pixel effect
+    }
+
+    p.draw = function() {
+        // Clear the screen completely to prevent trailing
+        p.background(palette.background[0], palette.background[1], palette.background[2]);
+        
+        // Draw starfield
+        drawStars();
+        
+        // Draw scanlines effect
+        drawScanlines();
+        
+        if (!gameOver) {
+            // Update player
+            player.update();
+            player.display();
+            
+            // Update pills
+            for (let i = pills.length - 1; i >= 0; i--) {
+                pills[i].update();
+                pills[i].display();
+                
+                // Check collection
+                if (player.collect(pills[i])) {
+                    score += 10;
+                    pills.splice(i, 1);
+                    pills.push(new Pill(p.random(p.width), p.random(-200, -50)));
+                }
+                
+                // Remove if off-screen
+                if (pills[i].pos.y > p.height + 20) {
+                    pills.splice(i, 1);
+                    pills.push(new Pill(p.random(p.width), p.random(-200, -50)));
+                }
+            }
+            
+            // Update enemies
+            for (let i = enemies.length - 1; i >= 0; i--) {
+                enemies[i].update();
+                enemies[i].display();
+                
+                // Check collision with player
+                if (player.collideWith(enemies[i])) {
+                    gameOver = true;
+                }
+                
+                // Remove if off-screen
+                if (enemies[i].pos.y > p.height + 20) {
+                    enemies.splice(i, 1);
+                    enemies.push(new Enemy(p.random(p.width), p.random(-300, -100)));
+                }
+            }
+            
+            // Add more enemies as score increases
+            if (p.frameCount % 300 === 0 && enemies.length < 10) {
+                enemies.push(new Enemy(p.random(p.width), p.random(-300, -100)));
+            }
+        } else {
+            // Game over screen
+            p.textSize(40);
+            p.fill(palette.gameOverText);
+            p.textAlign(p.CENTER, p.CENTER);
+            drawPixelText("GAME OVER", p.width/2, p.height/2 - 40, 4);
+            p.textSize(24);
+            p.fill(palette.text);
+            drawPixelText("FINAL SCORE: " + score, p.width/2, p.height/2 + 20, 2);
+            drawPixelText("CLICK TO RESTART", p.width/2, p.height/2 + 60, 2);
+            
+            // Check for restart
+            if (p.mouseIsPressed) {
+                gameOver = false;
+                score = 0;
+                player = new Player(p.width/2, p.height - 50);
+                enemies = [];
+                pills = [];
+                
+                for (let i = 0; i < 10; i++) {
+                    pills.push(new Pill(p.random(p.width), p.random(-200, -50)));
+                }
+                
+                for (let i = 0; i < 5; i++) {
+                    enemies.push(new Enemy(p.random(p.width), p.random(-300, -100)));
+                }
+            }
+        }
+        
+        // Display score
+        p.fill(palette.text);
+        p.textSize(20);
+        p.textAlign(p.LEFT, p.TOP);
+        drawPixelText("SCORE: " + score, 20, 20, 2);
+    }
+
+    function drawPixelText(txt, x, y, size) {
+        p.push();
+        p.textAlign(p.CENTER, p.CENTER);
+        
+        // Draw a pixelated version of text
+        let chars = txt.split('');
+        let totalWidth = 0;
+        
+        for (let i = 0; i < chars.length; i++) {
+            let charWidth = p.textWidth(chars[i]) * size;
+            totalWidth += charWidth + size;
+        }
+        
+        let startX = x - totalWidth / 2;
+        let currentX = startX;
+        
+        for (let i = 0; i < chars.length; i++) {
+            p.text(chars[i], currentX, y);
+            currentX += p.textWidth(chars[i]) * size + size;
+        }
+        
+        p.pop();
+    }
+
+    function setupStars() {
+        // Create a fixed set of stars at the beginning
+        for (let i = 0; i < 50; i++) {
+            stars.push({
+                x: Math.floor(p.random(p.width) / pixelSize) * pixelSize,
+                y: Math.floor(p.random(p.height) / pixelSize) * pixelSize,
+                brightness: p.random(0.5, 1),
+                pulse: p.random(0, p.TWO_PI)
+            });
+        }
+    }
+
+    function drawStars() {
+        // If stars array is empty, set up stars
+        if (stars.length === 0) {
+            setupStars();
+        }
+        
+        p.noStroke();
+        for (let star of stars) {
+            // Make stars twinkle slightly
+            let twinkle = p.sin(p.frameCount * 0.05 + star.pulse) * 0.2 + 0.8;
+            p.fill(
+                palette.stars[0] * twinkle, 
+                palette.stars[1] * twinkle, 
+                palette.stars[2] * twinkle
+            );
+            p.rect(star.x, star.y, pixelSize, pixelSize);
+        }
+    }
+
+    function drawScanlines() {
+        // Draw more realistic CRT scanlines
+        p.noStroke();
+        p.fill(0, 0, 0, scanlineAlpha);
+        for (let y = 0; y < p.height; y += pixelSize * 2) {
+            p.rect(0, y, p.width, pixelSize);
+        }
+        
+        // Add CRT vignette effect (darker corners)
+        p.drawingContext.save();
+        let gradient = p.drawingContext.createRadialGradient(
+            p.width/2, p.height/2, 0,           // inner circle
+            p.width/2, p.height/2, p.width * 0.7  // outer circle
+        );
+        gradient.addColorStop(0, 'rgba(0,0,0,0)');
+        gradient.addColorStop(1, 'rgba(0,0,0,0.4)');
+        
+        p.drawingContext.fillStyle = gradient;
+        p.drawingContext.fillRect(0, 0, p.width, p.height);
+        p.drawingContext.restore();
+        
+        // Add subtle RGB color shift for CRT effect
+        p.blendMode(p.SCREEN);
+        p.noStroke();
+        p.fill(255, 0, 0, 8);  // Red shift
+        p.rect(2, 0, p.width, p.height);
+        p.fill(0, 0, 255, 8);  // Blue shift
+        p.rect(-2, 0, p.width, p.height);
+        p.blendMode(p.BLEND);
+    }
+
+    p.keyPressed = function() {
+        if (p.keyCode === p.LEFT_ARROW) {
+            player.isMovingLeft = true;
+        } else if (p.keyCode === p.RIGHT_ARROW) {
+            player.isMovingRight = true;
+        }
+    }
+
+    p.keyReleased = function() {
+        if (p.keyCode === p.LEFT_ARROW) {
+            player.isMovingLeft = false;
+        } else if (p.keyCode === p.RIGHT_ARROW) {
+            player.isMovingRight = false;
+        }
+    }
+    
+    // Resize canvas when window is resized
+    p.windowResized = function() {
+        p.resizeCanvas(
+            document.getElementById('sketch-container').offsetWidth, 
+            document.getElementById('sketch-container').offsetHeight
+        );
+        
+        // Recreate stars for new dimensions
+        stars = [];
+        setupStars();
+    }
+
+    class Player {
+        constructor(x, y) {
+            // Align to pixel grid
+            this.pos = p.createVector(
+                Math.floor(x / pixelSize) * pixelSize, 
+                Math.floor(y / pixelSize) * pixelSize
+            );
+            this.size = 8 * pixelSize;
+            this.speed = pixelSize;
+            this.isMovingLeft = false;
+            this.isMovingRight = false;
+            this.thrustParticles = [];
+        }
+        
+        update() {
+            // Move player (snap to pixel grid)
+            if (this.isMovingLeft) {
+                this.pos.x -= this.speed;
+            }
+            if (this.isMovingRight) {
+                this.pos.x += this.speed;
+            }
+            
+            // Keep in bounds
+            this.pos.x = p.constrain(this.pos.x, this.size/2, p.width - this.size/2);
+            this.pos.x = Math.floor(this.pos.x / pixelSize) * pixelSize;
+            
+            // Add thrust particles
+            if (p.frameCount % 4 === 0) {
+                let particle = {
+                    x: this.pos.x,
+                    y: this.pos.y + this.size/2,
+                    size: pixelSize * Math.floor(p.random(1, 3)),
+                    life: 10,
+                    vx: Math.floor(p.random(-1, 2)) * pixelSize
+                };
+                this.thrustParticles.push(particle);
+            }
+            
+            // Update thrust particles
+            for (let i = this.thrustParticles.length - 1; i >= 0; i--) {
+                let particle = this.thrustParticles[i];
+                particle.y += pixelSize;
+                particle.x += particle.vx;
+                particle.life--;
+                if (particle.life <= 0) {
+                    this.thrustParticles.splice(i, 1);
+                }
+            }
+        }
+        
+        collect(pill) {
+            let d = p.dist(this.pos.x, this.pos.y, pill.pos.x, pill.pos.y);
+            return d < this.size/2 + pill.size/2;
+        }
+        
+        collideWith(enemy) {
+            let d = p.dist(this.pos.x, this.pos.y, enemy.pos.x, enemy.pos.y);
+            return d < this.size/2 + enemy.size/2;
+        }
+        
+        display() {
+            // Draw thrust particles
+            p.noStroke();
+            for (let particle of this.thrustParticles) {
+                let alpha = p.map(particle.life, 0, 10, 0, 255);
+                // More muted orange-yellow for fire
+                p.fill(180, 110, 40, alpha);
+                p.rect(particle.x, particle.y, particle.size, particle.size);
+            }
+            
+            // Draw player
+            p.fill(palette.player);
+            p.noStroke();
+            
+            // Ship body (pixel style)
+            // Main body
+            p.rect(
+                this.pos.x - this.size/2,
+                this.pos.y - this.size/2,
+                this.size,
+                this.size
+            );
+            
+            // Wings
+            p.rect(
+                this.pos.x - this.size/2 - pixelSize*2,
+                this.pos.y,
+                pixelSize*2,
+                pixelSize*3
+            );
+            
+            p.rect(
+                this.pos.x + this.size/2,
+                this.pos.y,
+                pixelSize*2,
+                pixelSize*3
+            );
+            
+            // Cockpit
+            p.fill(palette.playerHighlight);
+            p.rect(
+                this.pos.x - pixelSize*2,
+                this.pos.y - this.size/4,
+                pixelSize*4,
+                pixelSize*2
+            );
+        }
+    }
+
+    class Pill {
+        constructor(x, y) {
+            // Align to pixel grid
+            this.pos = p.createVector(
+                Math.floor(x / pixelSize) * pixelSize, 
+                Math.floor(y / pixelSize) * pixelSize
+            );
+            this.vel = p.createVector(
+                0, 
+                Math.floor(p.random(1, 3)) * pixelSize
+            );
+            this.size = Math.floor(p.random(4, 6)) * pixelSize;
+            this.frameCounter = Math.floor(p.random(0, 60));
+        }
+        
+        update() {
+            this.pos.add(this.vel);
+            this.frameCounter++;
+            // Ensure position stays aligned to pixel grid
+            this.pos.x = Math.floor(this.pos.x / pixelSize) * pixelSize;
+            this.pos.y = Math.floor(this.pos.y / pixelSize) * pixelSize;
+        }
+        
+        display() {
+            // Pulse effect
+            let pulse = (this.frameCounter % 30 < 15) ? 0 : 1;
+            
+            // Pill body (pixel art style)
+            p.fill(palette.pill);
+            p.noStroke();
+            p.rect(
+                this.pos.x - this.size/2,
+                this.pos.y - this.size/4,
+                this.size,
+                this.size/2
+            );
+            
+            // Highlight
+            p.fill(palette.pillHighlight);
+            p.rect(
+                this.pos.x - this.size/4,
+                this.pos.y - this.size/8,
+                pixelSize * (pulse + 1),
+                pixelSize * (pulse + 1)
+            );
+        }
+    }
+
+    class Enemy {
+        constructor(x, y) {
+            // Align to pixel grid
+            this.pos = p.createVector(
+                Math.floor(x / pixelSize) * pixelSize, 
+                Math.floor(y / pixelSize) * pixelSize
+            );
+            this.vel = p.createVector(
+                Math.floor(p.random(-1, 2)) * pixelSize, 
+                Math.floor(p.random(1, 3)) * pixelSize
+            );
+            this.size = Math.floor(p.random(5, 10)) * pixelSize;
+            this.frameCounter = Math.floor(p.random(0, 60));
+            this.type = Math.floor(p.random(0, 3)); // 0, 1, or 2 for different enemy types
+        }
+        
+        update() {
+            this.pos.add(this.vel);
+            this.frameCounter++;
+            
+            // Ensure position stays aligned to pixel grid
+            this.pos.x = Math.floor(this.pos.x / pixelSize) * pixelSize;
+            this.pos.y = Math.floor(this.pos.y / pixelSize) * pixelSize;
+            
+            // Bounce off edges
+            if (this.pos.x < this.size/2 || this.pos.x > p.width - this.size/2) {
+                this.vel.x *= -1;
+            }
+        }
+        
+        display() {
+            // Animation frame (simple 2-frame animation)
+            let frame = Math.floor(this.frameCounter / 15) % 2;
+            
+            // Enemy body (pixel art style)
+            p.fill(palette.enemy);
+            p.noStroke();
+            
+            if (this.type === 0) {
+                // Square enemy with "spikes"
+                p.rect(
+                    this.pos.x - this.size/2,
+                    this.pos.y - this.size/2,
+                    this.size,
+                    this.size
+                );
+                
+                // Animated spikes
+                if (frame === 0) {
+                    // Top spike
+                    p.rect(this.pos.x - pixelSize, this.pos.y - this.size/2 - pixelSize*2, pixelSize*2, pixelSize*2);
+                    // Right spike
+                    p.rect(this.pos.x + this.size/2, this.pos.y - pixelSize, pixelSize*2, pixelSize*2);
+                    // Bottom spike
+                    p.rect(this.pos.x - pixelSize, this.pos.y + this.size/2, pixelSize*2, pixelSize*2);
+                    // Left spike
+                    p.rect(this.pos.x - this.size/2 - pixelSize*2, this.pos.y - pixelSize, pixelSize*2, pixelSize*2);
+                } else {
+                    // Diagonal spikes
+                    // Top-right
+                    p.rect(this.pos.x + this.size/4, this.pos.y - this.size/2 - pixelSize*2, pixelSize*2, pixelSize*2);
+                    // Bottom-right
+                    p.rect(this.pos.x + this.size/2, this.pos.y + this.size/4, pixelSize*2, pixelSize*2);
+                    // Bottom-left
+                    p.rect(this.pos.x - this.size/4 - pixelSize*2, this.pos.y + this.size/2, pixelSize*2, pixelSize*2);
+                    // Top-left
+                    p.rect(this.pos.x - this.size/2 - pixelSize*2, this.pos.y - this.size/4 - pixelSize*2, pixelSize*2, pixelSize*2);
+                }
+            }
+            else if (this.type === 1) {
+                // Triangular enemy
+                p.triangle(
+                    this.pos.x, this.pos.y - this.size/2,
+                    this.pos.x - this.size/2, this.pos.y + this.size/2,
+                    this.pos.x + this.size/2, this.pos.y + this.size/2
+                );
+                
+                // Animated "eyes"
+                p.fill(palette.enemyHighlight);
+                if (frame === 0) {
+                    p.rect(this.pos.x - this.size/4, this.pos.y, pixelSize*2, pixelSize*2);
+                    p.rect(this.pos.x + this.size/4 - pixelSize*2, this.pos.y, pixelSize*2, pixelSize*2);
+                } else {
+                    p.rect(this.pos.x - this.size/4, this.pos.y + pixelSize*2, pixelSize*2, pixelSize*2);
+                    p.rect(this.pos.x + this.size/4 - pixelSize*2, this.pos.y + pixelSize*2, pixelSize*2, pixelSize*2);
+                }
+            }
+            else {
+                // "Octopus" style enemy
+                // Body
+                p.rect(
+                    this.pos.x - this.size/2,
+                    this.pos.y - this.size/4,
+                    this.size,
+                    this.size/2
+                );
+                
+                // Tentacles (animated)
+                if (frame === 0) {
+                    p.rect(this.pos.x - this.size/2, this.pos.y + this.size/4, pixelSize*2, pixelSize*3);
+                    p.rect(this.pos.x - this.size/4, this.pos.y + this.size/4, pixelSize*2, pixelSize*4);
+                    p.rect(this.pos.x + this.size/4 - pixelSize*2, this.pos.y + this.size/4, pixelSize*2, pixelSize*2);
+                    p.rect(this.pos.x + this.size/2 - pixelSize*2, this.pos.y + this.size/4, pixelSize*2, pixelSize*3);
+                } else {
+                    p.rect(this.pos.x - this.size/2, this.pos.y + this.size/4, pixelSize*2, pixelSize*2);
+                    p.rect(this.pos.x - this.size/4, this.pos.y + this.size/4, pixelSize*2, pixelSize*3);
+                    p.rect(this.pos.x + this.size/4 - pixelSize*2, this.pos.y + this.size/4, pixelSize*2, pixelSize*4);
+                    p.rect(this.pos.x + this.size/2 - pixelSize*2, this.pos.y + this.size/4, pixelSize*2, pixelSize*2);
+                }
+            }
+            
+            // Center highlight (common to all enemy types)
+            p.fill(palette.enemyHighlight);
+            p.rect(
+                this.pos.x - pixelSize,
+                this.pos.y - pixelSize,
+                pixelSize*2,
+                pixelSize*2
+            );
+        }
+    }
+}, 'sketch-container');
+</script>
+
+</body>
+</html>

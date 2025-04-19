@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>YCHen - Crystalline Network</title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../../resource/css/bootstrap.min.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../../resource/css/style_works.css">
+    <link rel="stylesheet" href="../../resource/css/style.css">
+    <link rel="stylesheet" href="../../resource/css/sketches.css">
+    
+    <!-- P5.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+    
+    <style>
+        #sketch-container {
+            width: 100%;
+            height: 80vh;
+            margin: 0 auto;
+            display: block;
+            background-color: #10001a;
+        }
+        
+        .sketch-info {
+            margin-top: 40px;
+            margin-bottom: 60px;
+        }
+        
+        .sketch-description {
+            margin-bottom: 30px;
+        }
+        
+        .sketch-meta {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 4px;
+        }
+        
+        .sketch-meta h3 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .sketch-meta ul {
+            padding-left: 20px;
+        }
+        
+        .source-code {
+            margin-top: 30px;
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        
+        .source-code pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+        
+        .interactions {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e7f3ff;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="nav">
+    <div id="headerbox"> 
+        <div id="n_photography" class="headerelement">
+            <a href="/">photography</a>
+        </div> 
+        <div id="n_work" class="headerelement">
+            <a href="/work.html">work</a>
+        </div>
+        <div id="n_sketches" class="headerelement active">
+            <a href="/sketches.html">sketches</a>
+        </div>
+        <div id="n_about" class="headerelement">
+            <a href="/about.html">About</a>
+        </div> 
+        <div id="n_archive" class="headerelement">
+            <a href="/resource/pdf/CV_YliangChen_2023.pdf">CV</a>
+        </div> 
+    </div>
+    <div id="headerbox_left">
+        <div id="n_logo" class="headerelement"> 
+            <a href="/index.html"> <img src="../../resource/img/logo/logo.png" height="39" style="vertical-align:top"> &nbsp;YCH&nbsp; </a> 
+        </div> 
+        <div id="my_name" class="headerelement">
+            <a href="/index.html">Y.Liang Chen</a>
+        </div>
+    </div>
+</div>
+
+<div class="social-profiles">
+</div><!-- .social-profiles -->
+
+<div class="nav-bar-sep d-lg-none"></div>
+
+<div class="outer-container">
+    <div class="container sketch-detail-page">
+        <div class="row">
+            <div class="col">
+                <ul class="breadcrumbs flex align-items-center">
+                    <li><a href="/sketches.html">Sketches</a></li>
+                    <li>Crystalline Network</li>
+                </ul><!-- .breadcrumbs -->
+            </div><!-- .col -->
+        </div><!-- .row -->
+
+        <div class="row">
+            <div class="col-12">
+                <h1 class="sketch-title">Crystalline Network</h1>
+                <div class="sketch-tags">
+                    <span class="tag">p5.js</span>
+                    <span class="tag">Generative Art</span>
+                    <span class="tag">2023</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div id="sketch-container">
+                    <!-- The sketch will be rendered here -->
+                </div>
+            </div>
+        </div>
+
+        
+        
+        <div class="row">
+            <div class="col-12">
+                <div class="source-code">
+                    <h3>Source Code</h3>
+                    <pre><code>
+// Full source code can be viewed in crystallineNetwork.js
+// Key components:
+// - Crystal class: Represents individual nodes with properties like position, energy, size
+// - EnergyPath class: Creates the curved paths between crystals
+// - Mouse interaction to trigger energy flows
+                    </code></pre>
+                </div>
+            </div>
+        </div>
+
+        
+    </div><!-- .container -->
+</div><!-- .outer-container -->
+
+<script type='text/javascript' src='../../js/jquery.js'></script>
+<script type='text/javascript' src='../../js/custom.js'></script>
+
+<!-- Load the actual sketch -->
+<script>
+// Create new instance of p5 for the sketch container
+new p5((p) => {
+    // Declare variables
+    let crystals = [];
+    let crystalCount = 30;
+    let energyPaths = [];
+    let maxPaths = 60;
+
+    p.setup = function() {
+        // Create the canvas inside the container
+        let canvas = p.createCanvas(
+            document.getElementById('sketch-container').offsetWidth, 
+            document.getElementById('sketch-container').offsetHeight
+        );
+        canvas.parent('sketch-container');
+        
+        // Create crystal nodes
+        for (let i = 0; i < crystalCount; i++) {
+            crystals.push(new Crystal(
+                p.random(p.width),
+                p.random(p.height)
+            ));
+        }
+        
+        p.background(10, 0, 20);
+    }
+
+    p.draw = function() {
+        // Clear background completely (no trails)
+        p.background(10, 0, 20);
+        
+        // Update and display energy paths first (so they appear behind crystals)
+        for (let i = energyPaths.length - 1; i >= 0; i--) {
+            energyPaths[i].update();
+            energyPaths[i].display();
+            
+            if (energyPaths[i].isDead()) {
+                energyPaths.splice(i, 1);
+            }
+        }
+        
+        // Create new energy paths occasionally
+        if (p.frameCount % 10 === 0 && energyPaths.length < maxPaths) {
+            let source = p.random(crystals);
+            let targets = crystals.filter(c => c !== source && p.dist(c.pos.x, c.pos.y, source.pos.x, source.pos.y) < 300);
+            
+            if (targets.length > 0) {
+                let target = p.random(targets);
+                energyPaths.push(new EnergyPath(source, target));
+                
+                // Activate both crystals
+                source.activate();
+                target.activate();
+            }
+        }
+        
+        // Update and display crystal nodes
+        for (let i = 0; i < crystals.length; i++) {
+            crystals[i].update();
+            crystals[i].display();
+        }
+        
+        // Draw static connections between nearby crystals
+        p.stroke(100, 120, 255, 20);
+        p.strokeWeight(0.5);
+        for (let i = 0; i < crystals.length; i++) {
+            for (let j = i + 1; j < crystals.length; j++) {
+                let d = p.dist(crystals[i].pos.x, crystals[i].pos.y, 
+                            crystals[j].pos.x, crystals[j].pos.y);
+                
+                if (d < 250) {
+                    let alpha = p.map(d, 0, 250, 40, 5);
+                    p.stroke(90, 120, 200, alpha);
+                    p.line(crystals[i].pos.x, crystals[i].pos.y, 
+                        crystals[j].pos.x, crystals[j].pos.y);
+                }
+            }
+        }
+    }
+
+    p.mousePressed = function() {
+        // Create energy burst from nearest crystal
+        if (p.mouseX < 0 || p.mouseX > p.width || p.mouseY < 0 || p.mouseY > p.height) {
+            return;
+        }
+        
+        let closestCrystal = null;
+        let closestDist = Infinity;
+        
+        for (let crystal of crystals) {
+            let d = p.dist(p.mouseX, p.mouseY, crystal.pos.x, crystal.pos.y);
+            if (d < closestDist) {
+                closestDist = d;
+                closestCrystal = crystal;
+            }
+        }
+        
+        if (closestDist < 200) {
+            closestCrystal.activate(1.5); // Strong activation
+            
+            // Create energy paths to nearby crystals
+            let targets = crystals.filter(c => c !== closestCrystal && 
+                                    p.dist(c.pos.x, c.pos.y, closestCrystal.pos.x, closestCrystal.pos.y) < 350);
+            
+            for (let target of targets.slice(0, 3)) { // Up to 3 connections
+                energyPaths.push(new EnergyPath(closestCrystal, target));
+                target.activate(0.8);
+            }
+        }
+    }
+    
+    // Resize canvas when window is resized
+    p.windowResized = function() {
+        p.resizeCanvas(
+            document.getElementById('sketch-container').offsetWidth, 
+            document.getElementById('sketch-container').offsetHeight
+        );
+    }
+
+    class Crystal {
+        constructor(x, y) {
+            this.pos = p.createVector(x, y);
+            this.target = p.createVector(p.random(p.width), p.random(p.height));
+            this.vel = p.createVector(0, 0);
+            
+            // Appearance
+            this.baseSize = p.random(15, 35);
+            this.size = this.baseSize;
+            this.rotation = p.random(p.TWO_PI);
+            this.rotationSpeed = p.random(-0.01, 0.01);
+            this.points = p.floor(p.random(3, 7)); // Number of crystal points
+            this.irregularity = p.random(0.2, 0.8); // How irregular the crystal shape is
+            
+            // Energy
+            this.energy = p.random(0.2, 0.6);
+            this.maxEnergy = 1.5;
+            this.energyDecay = p.random(0.98, 0.99);
+            
+            // Colors
+            this.hue = p.random(180, 260); // Blue to purple range
+            this.saturation = p.random(70, 100);
+            this.brightness = p.random(70, 90);
+            
+            // Movement
+            this.speed = p.random(0.1, 0.4);
+            this.idleTime = 0;
+            this.maxIdleTime = p.random(100, 300);
+        }
+        
+        update() {
+            // Update energy level
+            this.energy *= this.energyDecay;
+            this.energy = p.constrain(this.energy, 0.2, this.maxEnergy);
+            
+            // Update size based on energy
+            this.size = this.baseSize * (0.8 + this.energy * 0.3);
+            
+            // Update rotation
+            this.rotation += this.rotationSpeed * (1 + this.energy * 0.5);
+            
+            // Movement toward target with ease
+            let direction = p5.Vector.sub(this.target, this.pos);
+            let distance = direction.mag();
+            
+            if (distance < 20) {
+                this.idleTime++;
+                
+                if (this.idleTime > this.maxIdleTime) {
+                    this.target = p.createVector(p.random(p.width), p.random(p.height));
+                    this.idleTime = 0;
+                }
+            }
+            
+            direction.normalize();
+            direction.mult(this.speed * (0.5 + this.energy * 0.5));
+            
+            // Ease into movement
+            this.vel.lerp(direction, 0.02);
+            this.pos.add(this.vel);
+            
+            // Keep on screen
+            this.pos.x = p.constrain(this.pos.x, 0, p.width);
+            this.pos.y = p.constrain(this.pos.y, 0, p.height);
+        }
+        
+        activate(amount = 1) {
+            this.energy = p.min(this.energy + amount * 0.3, this.maxEnergy);
+            this.rotationSpeed *= -1; // Reverse rotation on activation
+        }
+        
+        display() {
+            p.push();
+            p.translate(this.pos.x, this.pos.y);
+            p.rotate(this.rotation);
+            
+            // Outer glow
+            p.noStroke();
+            let glowSize = this.size * (1.5 + this.energy * 0.5);
+            p.fill(this.hue, this.saturation, this.brightness, 15 + this.energy * 20);
+            p.ellipse(0, 0, glowSize, glowSize);
+            
+            // Crystal shape
+            p.beginShape();
+            for (let i = 0; i < this.points; i++) {
+                let angle = p.map(i, 0, this.points, 0, p.TWO_PI);
+                let r = this.size * (1 + p.sin(angle * 3 + p.frameCount * 0.02) * this.irregularity * 0.3);
+                let x = p.cos(angle) * r;
+                let y = p.sin(angle) * r;
+                
+                // Color each vertex with slight variation
+                let energyFactor = 0.5 + this.energy * 0.5;
+                p.fill(
+                    this.hue, 
+                    this.saturation * energyFactor, 
+                    this.brightness * energyFactor, 
+                    150 + this.energy * 100
+                );
+                
+                p.vertex(x, y);
+            }
+            p.endShape(p.CLOSE);
+            
+            // Inner core
+            p.fill(
+                this.hue, 
+                this.saturation * 0.7, 
+                this.brightness * 1.3, 
+                200
+            );
+            let innerSize = this.size * 0.4 * (0.8 + this.energy * 0.4);
+            p.ellipse(0, 0, innerSize, innerSize);
+            
+            p.pop();
+        }
+    }
+
+    class EnergyPath {
+        constructor(source, target) {
+            this.source = source;
+            this.target = target;
+            this.progress = 0;
+            this.speed = p.random(0.01, 0.03);
+            this.lifetime = p.random(0.8, 1.2);
+            this.thickness = p.random(1, 3);
+            
+            // Path properties
+            this.controlPoints = [];
+            let midPoint = p5.Vector.lerp(source.pos, target.pos, 0.5);
+            let perpendicular = p.createVector(
+                -(target.pos.y - source.pos.y),
+                target.pos.x - source.pos.x
+            );
+            perpendicular.normalize();
+            perpendicular.mult(p.random(-1, 1) * p.random(30, 100));
+            midPoint.add(perpendicular);
+            
+            this.controlPoints.push(source.pos);
+            this.controlPoints.push(midPoint);
+            this.controlPoints.push(target.pos);
+            
+            // Energy particles
+            this.particles = [];
+            this.particleCount = p.floor(p.random(5, 15));
+            
+            // Appearance
+            this.hue = p.lerp(source.hue, target.hue, 0.5);
+            this.brightness = p.random(80, 100);
+        }
+        
+        update() {
+            this.progress += this.speed;
+            
+            // Create particles along the path
+            if (p.frameCount % 3 === 0 && this.particles.length < this.particleCount) {
+                let t = p.random(0, p.min(this.progress, 1));
+                let pos = this.getPointOnPath(t);
+                
+                this.particles.push({
+                    pos: pos,
+                    vel: p5.Vector.random2D().mult(p.random(0.5, 1.5)),
+                    size: p.random(1, 4),
+                    life: 1.0
+                });
+            }
+            
+            // Update particles
+            for (let i = this.particles.length - 1; i >= 0; i--) {
+                let particle = this.particles[i];
+                particle.pos.add(particle.vel);
+                particle.life -= 0.02;
+                
+                if (particle.life <= 0) {
+                    this.particles.splice(i, 1);
+                }
+            }
+        }
+        
+        getPointOnPath(t) {
+            // Quadratic Bezier
+            let p0 = this.controlPoints[0];
+            let p1 = this.controlPoints[1];
+            let p2 = this.controlPoints[2];
+            
+            let x = p.pow(1-t, 2) * p0.x + 2 * (1-t) * t * p1.x + p.pow(t, 2) * p2.x;
+            let y = p.pow(1-t, 2) * p0.y + 2 * (1-t) * t * p1.y + p.pow(t, 2) * p2.y;
+            
+            return p.createVector(x, y);
+        }
+        
+        display() {
+            // Draw path with variable transparency
+            p.noFill();
+            
+            // Path glow
+            let pathAlpha = p.map(this.progress, 0, 1, 200, 50) * 
+                            p.map(this.lifetime - this.progress, 0, this.lifetime, 0, 1);
+            
+            p.stroke(this.hue, 70, 100, pathAlpha * 0.3);
+            p.strokeWeight(this.thickness * 3);
+            p.beginShape();
+            for (let t = 0; t <= p.min(this.progress, 1); t += 0.05) {
+                let point = this.getPointOnPath(t);
+                p.vertex(point.x, point.y);
+            }
+            p.endShape();
+            
+            // Main path
+            p.stroke(this.hue, 90, this.brightness, pathAlpha);
+            p.strokeWeight(this.thickness);
+            p.beginShape();
+            for (let t = 0; t <= p.min(this.progress, 1); t += 0.05) {
+                let point = this.getPointOnPath(t);
+                p.vertex(point.x, point.y);
+            }
+            p.endShape();
+            
+            // Draw particles
+            p.noStroke();
+            for (let particle of this.particles) {
+                p.fill(this.hue, 80, 100, particle.life * 200);
+                p.ellipse(particle.pos.x, particle.pos.y, particle.size, particle.size);
+            }
+        }
+        
+        isDead() {
+            return this.progress >= this.lifetime;
+        }
+    }
+}, 'sketch-container');
+</script>
+
+</body>
+</html>

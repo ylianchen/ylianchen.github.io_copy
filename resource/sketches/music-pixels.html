@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>YCHen - Pills</title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../../resource/css/bootstrap.min.css">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="../../resource/css/style_works.css">
+    <link rel="stylesheet" href="../../resource/css/style.css">
+    <link rel="stylesheet" href="../../resource/css/sketches.css">
+    
+    <!-- P5.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+    
+    <style>
+        #sketch-container {
+            width: 100%;
+            height: 80vh;
+            margin: 0 auto;
+            display: block;
+            background-color: #0000ff;
+        }
+        
+        .sketch-info {
+            margin-top: 40px;
+            margin-bottom: 60px;
+        }
+        
+        .sketch-description {
+            margin-bottom: 30px;
+        }
+        
+        .sketch-meta {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 4px;
+        }
+        
+        .sketch-meta h3 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .sketch-meta ul {
+            padding-left: 20px;
+        }
+        
+        .source-code {
+            margin-top: 30px;
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        
+        .source-code pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+        
+        .interactions {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e7f3ff;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="nav">
+    <div id="headerbox"> 
+        <div id="n_photography" class="headerelement">
+            <a href="/">photography</a>
+        </div> 
+        <div id="n_work" class="headerelement">
+            <a href="/work.html">work</a>
+        </div>
+        <div id="n_sketches" class="headerelement active">
+            <a href="/sketches.html">sketches</a>
+        </div>
+        <div id="n_about" class="headerelement">
+            <a href="/about.html">About</a>
+        </div> 
+        <div id="n_archive" class="headerelement">
+            <a href="/resource/pdf/CV_YliangChen_2023.pdf">CV</a>
+        </div> 
+    </div>
+    <div id="headerbox_left">
+        <div id="n_logo" class="headerelement"> 
+            <a href="/index.html"> <img src="../../resource/img/logo/logo.png" height="39" style="vertical-align:top"> &nbsp;YCH&nbsp; </a> 
+        </div> 
+        <div id="my_name" class="headerelement">
+            <a href="/index.html">Y.Liang Chen</a>
+        </div>
+    </div>
+</div>
+
+<div class="social-profiles">
+</div><!-- .social-profiles -->
+
+<div class="nav-bar-sep d-lg-none"></div>
+
+<div class="outer-container">
+    <div class="container sketch-detail-page">
+        <div class="row">
+            <div class="col">
+                <ul class="breadcrumbs flex align-items-center">
+                    <li><a href="/sketches.html">Sketches</a></li>
+                    <li>Pills</li>
+                </ul><!-- .breadcrumbs -->
+            </div><!-- .col -->
+        </div><!-- .row -->
+
+        <div class="row">
+            <div class="col-12">
+                <h1 class="sketch-title">Pills</h1>
+                <div class="sketch-tags">
+                    <span class="tag">p5.js</span>
+                    <span class="tag">Generative Art</span>
+                    <span class="tag">2022</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div id="sketch-container">
+                    <!-- The sketch will be rendered here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="row sketch-info">
+            <div class="col-12 col-md-8">
+                <div class="sketch-description">
+                    <h2>About this sketch</h2>
+                    <p>Pills is a hypnotic, abstract generative animation that creates a continuous stream of dynamic rectangular forms rising from the bottom of the screen. Against a deep blue background, these rectangular shapes—resembling pills or capsules—float upward while rotating and changing scale.</p>
+                    
+                    <p>The piece creates an almost meditative experience, with the continuous flow of forms creating patterns that never exactly repeat. Each "pill" has its own properties including size, speed, and slight color variations, contributing to the overall visual complexity while maintaining a cohesive aesthetic.</p>
+                    
+                    <div class="interactions">
+                        <h3>Visual Elements</h3>
+                        <p>The sketch features several key visual elements:</p>
+                        <ul>
+                            <li><strong>Rising Motion:</strong> All forms move upward at varying speeds, creating a sense of ascension</li>
+                            <li><strong>Rotation:</strong> Each shape rotates as it rises, adding dynamic movement</li>
+                            <li><strong>Transparency:</strong> The semi-transparent nature of the forms allows previous shapes to be partially visible</li>
+                            <li><strong>Color Palette:</strong> A primarily blue palette creates a cohesive visual field while allowing for subtle variations</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-12 col-md-4">
+                <div class="sketch-meta">
+                    <div class="meta-section">
+                        <h3>Tools Used</h3>
+                        <ul>
+                            <li>p5.js for rendering and animation</li>
+                            <li>Custom particle system</li>
+                            <li>Procedural shape generation</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="meta-section">
+                        <h3>Date</h3>
+                        <p>2022</p>
+                    </div>
+                    
+                    <div class="meta-section">
+                        <h3>Techniques</h3>
+                        <ul>
+                            <li>Particle-based animation</li>
+                            <li>Procedural motion</li>
+                            <li>Color theory application</li>
+                            <li>Layered transparency effects</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-12">
+                <div class="source-code">
+                    <h3>Source Code</h3>
+                    <pre><code>
+// Full source code can be viewed in pills.js
+// Key components:
+// - Flower class: Creates the pill-shaped objects with random properties
+// - Movement system: Controls the upward motion and rotation of pills
+// - Color system: Uses blue-hued palette with variable transparency
+                    </code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="row related-sketches">
+            <div class="col-12">
+                <h2>Related Sketches</h2>
+            </div>
+            
+            <div class="col-12 col-md-4">
+                <div class="portfolio-content">
+                    <figure class="sketch-preview">
+                        <a href="music-pixels.html">
+                            <img src="../../resource/img/sketches/musicpixels-preview.jpg" alt="Music Pixels Preview">
+                        </a>
+                    </figure>
+
+                    <div class="entry-content flex flex-column align-items-center justify-content-center">
+                        <h3><a href="music-pixels.html">Music Pixels</a></h3>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-12 col-md-4">
+                <div class="portfolio-content">
+                    <figure class="sketch-preview">
+                        <a href="crystalline-network.html">
+                            <img src="../../resource/img/sketches/crystalline-preview.jpg" alt="Crystalline Network Preview">
+                        </a>
+                    </figure>
+
+                    <div class="entry-content flex flex-column align-items-center justify-content-center">
+                        <h3><a href="crystalline-network.html">Crystalline Network</a></h3>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-12 col-md-4">
+                <div class="portfolio-content">
+                    <figure class="sketch-preview">
+                        <a href="space-arcade.html">
+                            <img src="../../resource/img/sketches/arcade-preview.jpg" alt="Space Arcade Preview">
+                        </a>
+                    </figure>
+
+                    <div class="entry-content flex flex-column align-items-center justify-content-center">
+                        <h3><a href="space-arcade.html">Space Arcade</a></h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!-- .container -->
+</div><!-- .outer-container -->
+
+<script type='text/javascript' src='../../js/jquery.js'></script>
+<script type='text/javascript' src='../../js/custom.js'></script>
+
+<!-- Load the actual sketch -->
+<script>
+// Create new instance of p5 for the sketch container
+new p5((p) => {
+    let flowers = [];
+
+    p.setup = function() {
+        // Create the canvas inside the container
+        let canvas = p.createCanvas(
+            document.getElementById('sketch-container').offsetWidth, 
+            document.getElementById('sketch-container').offsetHeight
+        );
+        canvas.parent('sketch-container');
+        
+        // Initialize flowers
+        for (var i = 0; i < 200; i++) {
+            flowers.push(new Flower(p.random(0, p.width), p.height));
+        }
+        
+        p.background(0, 0, 255);
+        p.frameRate(20);
+    }
+
+    p.draw = function() {
+        p.background(0, 0, 255, 10);
+        
+        for (var i = 0; i < flowers.length; i++) {
+            flowers[i].draw();
+            flowers[i].update();
+            
+            if (flowers[i].alive == 0) {
+                flowers.splice(i, 1);
+                flowers.push(new Flower(p.random(0, p.width), p.height));
+            }
+        }
+    }
+    
+    // Resize canvas when window is resized
+    p.windowResized = function() {
+        p.resizeCanvas(
+            document.getElementById('sketch-container').offsetWidth, 
+            document.getElementById('sketch-container').offsetHeight
+        );
+    }
+
+    class Flower {
+        constructor(x, y) {
+            // initialization
+            this.pos = p.createVector(x, y);
+            this.speed = p.random(0.1, 5);
+            this.color = p.color(p.random(255), p.random(255), p.random(255));
+            this.size = p.random(2, 50);
+            this.alive = 1;
+            this.x = 1500;
+        }
+
+        update() {
+            // behavior
+            this.pos.x = this.pos.x + p.random(-2, 2);
+            this.pos.y = this.pos.y + p.random(-1, 1);
+            this.pos.y = this.pos.y - this.speed;
+            
+            if (this.pos.y < -20) {
+                this.alive = 0;
+            }
+        }
+
+        draw() {
+            // appearance / drawing
+            p.fill(this.x / 5.2, 28, 255, 180);
+            p.push();
+            p.translate(this.pos.x, this.pos.y);
+
+            if (this.x >= -200) {
+                this.x = this.x - 5;
+            }
+
+            p.rotate(this.x / p.random(3));
+
+            p.scale(0.01 * this.size);
+            p.translate(this.x, 0, 0);
+            p.rect(
+                p.width / 2,
+                p.height / 2,
+                this.x - this.x / p.random(20, 40),
+                this.x - 499,
+                1000
+            );
+            p.fill(this.x / 5.2, 28, 0, p.random(200, 255));
+            p.pop();
+        }
+    }
+}, 'sketch-container');
+</script>
+
+</body>
+</html>
